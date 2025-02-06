@@ -1,0 +1,23 @@
+# Go binaries and builds
+*.exe
+*.out
+*.test
+
+# Cache and Go modules
+/go/pkg/*
+/go/bin/*
+/go/pkg/mod/*
+go.sum
+
+# Temporary files and logs
+*.log
+*.tmp
+*.swp
+*.swo
+
+# Environment and configuration variables
+.env
+
+# IDE configuration
+.vscode/
+.idea/
