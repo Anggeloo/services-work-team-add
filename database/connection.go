@@ -19,11 +19,12 @@ func Connect() {
 		log.Fatal("Error loading .env file")
 	}
 
-	DB_HOST := os.Getenv("DB_HOST")
-	DB_PORT := os.Getenv("DB_PORT")
-	DB_USER := os.Getenv("DB_USER")
-	DB_PASSWORD := os.Getenv("DB_PASSWORD")
-	DB_NAME := os.Getenv("DB_NAME")
+	DB_HOST=aws-postgres-microservices.cxfclnhjpr44.us-east-1.rds.amazonaws.com
+	DB_PORT=5432
+	DB_USER=postgres
+	DB_PASSWORD=AWSPServices0099
+	DB_NAME=db_work_team
+	
 
 	dsn := fmt.Sprintf(
 		"host=%s user=%s password=%s dbname=%s port=%s sslmode=require",
