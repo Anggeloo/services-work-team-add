@@ -1,27 +1,27 @@
-name: CI/CD to EC2
- 
+name: CI/CD to EC2 - Work Team Microservices
+
 on:
   push:
     branches: [ "QA" ]
- 
+
 jobs:
-  build-and-push-image:
+  build-and-push-images:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Source
+      - name: Checkout Source Code
         uses: actions/checkout@v3
- 
+
       - name: Login to Docker Hub
         run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
- 
+
       - name: Build Docker Image
-        run: docker build -t anggeloo/microservice-work-team-add:latest .
- 
+        run: docker build -t anggeloo/services-work-team-add:latest .
+
       - name: Push Docker Image
-        run: docker push anggeloo/microservice-work-team-add:latest
- 
+        run: docker push anggeloo/services-work-team-add:latest
+
   deploy-to-ec2:
-    needs: build-and-push-image
+    needs: build-and-push-images
     runs-on: ubuntu-latest
     steps:
       - name: Deploy to EC2
@@ -31,24 +31,17 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           script: |
-            # 1) Bajar la imagen de Docker Hub
-            docker pull anggeloo/microservice-work-team-add:latest
- 
-            # 2) Detener y eliminar contenedor previo
-            docker stop product_container || true
-            docker rm product_container || true
- 
-            # 3) Generar .env con secretos
-            echo "DB_HOST=${{ secrets.DB_HOST }}" > .env
-            echo "DB_USER=${{ secrets.DB_USER }}" >> .env
-            echo "DB_PASS=${{ secrets.DB_PASS }}" >> .env
-            echo "DB_NAME=${{ secrets.DB_NAME }}" >> .env
-            echo "DB_PORT=${{ secrets.DB_PORT }}" >> .env
-            echo "PORT=${{ secrets.PORT }}" >> .env
-            # Agrega más variables si requieres
- 
-            # 4) Correr contenedor usando ese .env
-            docker run -d --name product_container \
-              --env-file .env \
-              -p 8181:8181 \
-              anggeloo/microservice-work-team-add:latest
+            # 1) Change to the directory where docker-compose.yml is located
+            cd /home/ubuntu/
+
+            # 2) Download the latest images from Docker Hub
+            docker pull anggeloo/services-work-team-add:latest
+            docker pull anggeloo/services-work-team-search:latest
+            docker pull anggeloo/services-work-team-update:latest
+            docker pull anggeloo/services-work-team-delete:latest
+
+            # 3) Stop and remove previous containers
+            docker-compose down
+
+            # 4) Push new containers with updated images
+            docker-compose up -d --remove-orphans
