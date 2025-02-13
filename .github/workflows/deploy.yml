@@ -25,8 +25,15 @@ jobs:
           go version
           go env GOPATH
 
+      - name: Initialize Go module if missing
+        run: |
+          if [ ! -f go.mod ]; then
+            go mod init work-team-add
+          fi
+
       - name: Install dependencies
-        run: go mod download
+        run: |
+          go get -v ./...
 
       - name: Build the application
         run: go build -v ./...
