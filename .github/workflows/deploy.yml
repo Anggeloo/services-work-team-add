@@ -37,11 +37,8 @@ jobs:
             go mod init work-team-add
           fi
 
-      - name: Tidy up dependencies
-        run: go mod tidy
-
       - name: Install dependencies
-        run: go install ./...
+        run: go get ./...
 
       - name: Build the application
         run: go build -v ./...
